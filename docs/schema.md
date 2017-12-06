@@ -1,49 +1,12 @@
-type Theater {
-  id : Int,
-  name : String,
-  location : Location,
-  screen : [Screen]
-}
+type Location{ id : ID, lat : Float, long : Float } type Rating { id : ID,
+provider : String, score : Float }
 
-type Movie {
-  name : String,
-  id : Int,
-  runtime : Int,
-  showtime : Showtime
-  description : String,
-  genre: [String],
-  rating: [Rating],
-  language: String,
-  certificate: String,
-  director: String,
-  cast : [String]
-}
+type Movie { id : ID, name : String, runtime : Int, description : String, genre:
+[String], rating: [Rating], language: String, certificate: String, director:
+String, cast : [String] }
 
-type Location{
-  id : Int,
-  lat : Float,
-  long : Float,
-}
-  
-type Rating {
-  id : Int
-  provider : String,
-  score : Float
-}
+type ShowDetail { id : ID, movie: Movie, timeOfMovieStart : Int }
 
-type Screen {
-  auditoriumNumber : Int,
-  showTimings: [Showtime]
-}
-  
-type Showtime {
-  id : Int,
-  movie: Movie,
-  timeOfMovieStart : Int,
-  seats : Seats
-}
+type Screen { id : ID, auditoriumNumber : Int, showDetails: [ShowDetail] }
 
-type Seats {
-  number : Int,
-  cost : Int
-}
+type Theater { id : ID, name : String, location : Location, screen : [Screen] }

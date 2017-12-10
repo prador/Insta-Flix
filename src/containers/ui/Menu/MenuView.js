@@ -170,7 +170,7 @@ class Menu extends Component {
               <Spacer size={10} />
 
               <View style={[AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml]}>
-                <Button small title={'Log Out'} onPress={this.logout} />
+                <Button small title={'Log O ut'} onPress={this.logout} />
               </View>
             </View>
           :

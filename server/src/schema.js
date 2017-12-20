@@ -17,7 +17,7 @@ const typeDefs = `
     rating: [Rating], 
     language: String, 
     certificate: String, 
-    director: String, 
+    director: [String], 
     cast : [String] 
   }
 
@@ -46,8 +46,7 @@ const typeDefs = `
   type Query {
     getRating : Rating,
     getMovies : [Movie],
-    getMovie(name : String) : Movie,
-    getTheatres : [Theatre],
+    getTheatres : [Theatre]
   }
 `;
 

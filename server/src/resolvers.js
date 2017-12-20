@@ -6,38 +6,19 @@ const rating = {
 export default {
   Query: {
     getRating: () => rating,
-    getMovies: async (root, args, { db }) => {
-      const arr = [];
-      console.log('Roots ', root);
-      await db.ref('/movies').once('value', function(snapshot) {
-        snapshot.forEach(function(childSnapshot) {
-          var childData = childSnapshot.val();
-          arr.push(childData);
-        });
+    getMovies: async (root, args, { Movies }) => {
+      const movies = await Movies.find();
+      return movies.map(movie => {
+        movie.id = movie._id.toString();
+        return movie;
       });
-      return arr;
     },
-    getMovie: async (root, args, { db }) => {
-      console.log('args', args);
-      await db
-        .ref('/movies')
-        .orderByChild('name')
-        .equalTo(args.name)
-        .on('child_added', data => {
-          console.log(data);
-          return data.val();
-        });
-    },
-    getTheatres: async (root, args, { db }) => {
-      const arr = [];
-      console.log('Roots ', root);
-      await db.ref('/movie-theatres').once('value', function(snapshot) {
-        snapshot.forEach(function(childSnapshot) {
-          var childData = childSnapshot.val();
-          arr.push(childData);
-        });
+    getTheatres: async (root, args, { Theatres }) => {
+      const theatres = await Theatres.find();
+      return theatres.map(theatre => {
+        theatre.id = theatre._id.toString();
+        return theatre;
       });
-      return arr;
     },
   },
 };

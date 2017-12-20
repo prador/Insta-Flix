@@ -21,4 +21,17 @@ export default {
       });
     },
   },
+  Theatre: {
+    screen: theatre => {
+      console.log(theatre);
+      return [
+        {
+          id: 1,
+          theatreID: 2,
+          auditoriumNumber: 3,
+          showDetails: [],
+        },
+      ];
+    },
+  },
 };

@@ -2,11 +2,6 @@ import { makeExecutableSchema } from 'graphql-tools';
 import resolvers from './resolvers';
 
 const typeDefs = `
-  type Location{ 
-    id : ID, 
-    lat : Float, 
-    long : Float 
-  }
   type Rating { 
     id : ID, 
     provider : String, 
@@ -28,25 +23,31 @@ const typeDefs = `
 
   type ShowDetail { 
     id : ID, 
+    screenID : ID,
     movie: Movie, 
     timeOfMovieStart : Int 
   }
 
   type Screen { 
     id : ID, 
+    theatreID : ID,
     auditoriumNumber : Int, 
     showDetails: [ShowDetail] 
   }
 
-  type Theater { 
+  type Theatre { 
     id : ID, 
     name : String, 
-    location : Location, 
+    latitude : Float,
+    longitude : Float
     screen : [Screen] 
   }
 
   type Query {
-    getRating : Rating
+    getRating : Rating,
+    getMovies : [Movie],
+    getMovie(name : String) : Movie,
+    getTheatres : [Theatre],
   }
 `;
 

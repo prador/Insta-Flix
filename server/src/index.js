@@ -5,8 +5,10 @@ import mongoose from 'mongoose';
 import morgan from 'morgan';
 import bodyParser from 'body-parser';
 import { graphqlExpress, graphiqlExpress } from 'apollo-server-express';
-import { movieModel, theatreModel } from './modelFunctions';
+import { movieModel, theatreModel, screenModel } from './modelFunctions';
+//mport {initialiseModels} from './modelFunctions'
 import schema from './schema';
+mongoose.Promise = global.Promise;
 
 const url =
   'mongodb://batman:dragoon7%3F@cluster-demo-shard-00-00-njb1y.mongodb.net:27017,cluster-demo-shard-00-01-njb1y.mongodb.net:27017,cluster-demo-shard-00-02-njb1y.mongodb.net:27017/insta-flix?ssl=true&replicaSet=cluster-demo-shard-0&authSource=admin';
@@ -21,13 +23,9 @@ const app = express();
 
 const Movies = movieModel(mongoose);
 const Theatres = theatreModel(mongoose);
-
+const Screens = screenModel(mongoose);
 app.use(morgan('dev'));
-app.use(
-  '/graphql',
-  bodyParser.json(),
-  graphqlExpress({ schema, context: { Movies, Theatres } })
-);
+app.use('/graphql', bodyParser.json(), graphqlExpress({ schema }));
 app.use(
   '/graphiql',
   graphiqlExpress({
@@ -41,3 +39,4 @@ app.listen(PORT, () => {
 });
 
 export default app;
+export { Movies, Theatres, Screens };

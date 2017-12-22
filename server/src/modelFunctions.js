@@ -1,3 +1,5 @@
+import { Schema } from 'mongoose';
+
 export const movieModel = mongoose =>
   mongoose.model('movies', {
     name: String,
@@ -15,4 +17,10 @@ export const theatreModel = mongoose =>
     name: String,
     latitude: Number,
     longitude: Number,
+  });
+
+export const screenModel = mongoose =>
+  mongoose.model('screens', {
+    screenNumber: Number,
+    theatreID: Schema.Types.ObjectId,
   });

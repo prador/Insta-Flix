@@ -30,8 +30,8 @@ const typeDefs = `
 
   type Screen { 
     id : ID, 
-    theatreID : ID,
-    auditoriumNumber : Int, 
+    theatre : Theatre,
+    screenNumber : Int, 
     showDetails: [ShowDetail] 
   }
 

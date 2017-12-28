@@ -23,7 +23,7 @@ const typeDefs = `
 
   type ShowDetail { 
     id : ID, 
-    screenID : ID,
+    screen : Screen,
     movie: Movie, 
     timeOfMovieStart : Int 
   }
@@ -46,7 +46,9 @@ const typeDefs = `
   type Query {
     getRating : Rating,
     getMovies : [Movie],
-    getTheatres : [Theatre]
+    getTheatres : [Theatre],
+    getScreens : [Screen],
+    getShowDetails : [ShowDetail]
   }
 `;
 

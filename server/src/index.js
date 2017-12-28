@@ -5,7 +5,12 @@ import mongoose from 'mongoose';
 import morgan from 'morgan';
 import bodyParser from 'body-parser';
 import { graphqlExpress, graphiqlExpress } from 'apollo-server-express';
-import { movieModel, theatreModel, screenModel } from './modelFunctions';
+import {
+  movieModel,
+  theatreModel,
+  screenModel,
+  showDetailsModel,
+} from './modelFunctions';
 //mport {initialiseModels} from './modelFunctions'
 import schema from './schema';
 mongoose.Promise = global.Promise;
@@ -24,6 +29,7 @@ const app = express();
 const Movies = movieModel(mongoose);
 const Theatres = theatreModel(mongoose);
 const Screens = screenModel(mongoose);
+const ShowDetails = showDetailsModel(mongoose);
 app.use(morgan('dev'));
 app.use('/graphql', bodyParser.json(), graphqlExpress({ schema }));
 app.use(
@@ -39,4 +45,4 @@ app.listen(PORT, () => {
 });
 
 export default app;
-export { Movies, Theatres, Screens };
+export { Movies, Theatres, Screens, ShowDetails };

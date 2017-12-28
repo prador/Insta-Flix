@@ -24,3 +24,10 @@ export const screenModel = mongoose =>
     screenNumber: Number,
     theatreID: Schema.Types.ObjectId,
   });
+
+export const showDetailsModel = mongoose =>
+  mongoose.model('show-details', {
+    timeOfMovieStart: Number,
+    movieID: Schema.Types.ObjectId,
+    screenID: Schema.Types.ObjectId,
+  });

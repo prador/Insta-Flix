@@ -1,50 +1,50 @@
-import { Movies, Theatres, Screens, ShowDetails } from './index';
+import { Movies, Theatres, Screens } from './index';
 
-const rating = {
-  id: 1,
-  provider: 'Rotten Potatoes',
-};
-
+let movies = null;
 export default {
   Query: {
-    getRating: () => rating,
-    getMovies: async () => {
-      const movies = await Movies.find();
-      /*return movies.map(movie => {
-        movie.id = movie._id.toString();
-        return movie;
-      });*/
-      return movies;
-    },
-    getTheatres: async () => {
-      return await Theatres.find();
-    },
-    getScreens: async () => {
-      return await Screens.find();
-    },
-    getShowDetails: async () => {
-      return await ShowDetails.find();
+    getTheatres: async (root, args) => {
+      movies = await Movies.find({ language: { $in: args.languages } });
+      const screens = await Screens.find({
+        movieID: { $in: movies.map(i => i._id) },
+      });
+      const theatres = await Theatres.find({
+        _id: { $in: screens.map(i => i.theatreID) },
+      });
+
+      const modifiedTheatres = theatres.map(theatre => {
+        const tempScreens = screens.filter(
+          screen => screen.theatreID.toString() === theatre._id.toString()
+        );
+        const modifiedScreens = [];
+        tempScreens.map(screen => {
+          screen.timeOfMovieStart.map(time => {
+            modifiedScreens.push({
+              screenNumber: screen.screenNumber,
+              theatreID: screen.theatreID,
+              movieID: screen.movieID,
+              movieStartTime: time,
+            });
+          });
+        });
+        const shows = modifiedScreens.map(screen => {
+          return {
+            screenNumber: screen.screenNumber,
+            movieID: screen.movieID,
+            movieStartTime: screen.movieStartTime,
+          };
+        });
+        return Object.assign({}, theatre.toJSON(), { shows });
+      });
+      return modifiedTheatres;
     },
   },
-  Theatre: {
-    screen: async theatre => {
-      return await Screens.find({ theatreID: theatre._id.toString() });
-    },
-  },
-  Screen: {
-    theatre: async screen => {
-      return await Theatres.findOne({ _id: screen.theatreID });
-    },
-    showDetails: async screen => {
-      return await ShowDetails.find({ screenID: screen._id });
-    },
-  },
-  ShowDetail: {
-    movie: async showDetail => {
-      return await Movies.findOne({ _id: showDetail.movieID });
-    },
-    screen: async showDetail => {
-      return await Screens.findOne({ _id: showDetail.screenID });
+  Show: {
+    movie: async show => {
+      const movie = movies.find(movie => {
+        return movie._id.toString() === show.movieID.toString();
+      });
+      return movie;
     },
   },
 };

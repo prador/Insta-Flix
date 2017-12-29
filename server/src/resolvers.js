@@ -4,7 +4,10 @@ let movies = null;
 export default {
   Query: {
     getTheatres: async (root, args) => {
-      movies = await Movies.find({ language: { $in: args.languages } });
+      movies = null;
+      if (args.languages && args.languages.length > 0) {
+        movies = await Movies.find({ language: { $in: args.languages } });
+      } else movies = await Movies.find({});
       const screens = await Screens.find({
         movieID: { $in: movies.map(i => i._id) },
       });

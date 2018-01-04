@@ -1,18 +1,126 @@
 import { Movies, Theatres, Screens } from './index';
 
-let movies = null;
+let movies = null,
+  screens = null;
 export default {
   Query: {
     getTheatres: async (root, args) => {
       movies = null;
-      if (args.languages && args.languages.length > 0) {
+      screens = null;
+      if (args.languages && args.languages.length > 0 && args.startTime) {
+        const m = args.startTime % 100;
+        const h = args.startTime / 100;
+        let time = new Date();
+        let time2 = new Date();
+        time.setHours(time.getHours() + h);
+        time.setMinutes(time.getMinutes() + m);
         movies = await Movies.find({ language: { $in: args.languages } });
-      } else movies = await Movies.find({});
-      const screens = await Screens.find({
-        movieID: { $in: movies.map(i => i._id) },
-      });
+        /*
+        screens = await Screens.find({
+          movieID: { $in: movies.map(i => i._id) },
+        });*/
+        console.log('1', parseInt(`${time2.getHours()}${time2.getMinutes()}`));
+        console.log('2', parseInt(`${time.getHours()}${time.getMinutes()}`));
+        screens = await Screens.aggregate([
+          {
+            $match: {
+              movieID: { $in: movies.map(i => i._id) },
+            },
+          },
+          {
+            $project: {
+              timeOfMovieStart: {
+                $filter: {
+                  input: '$timeOfMovieStart',
+                  as: 'time',
+                  cond: {
+                    $and: [
+                      {
+                        $gt: [
+                          '$$time',
+                          parseInt(`${time2.getHours()}${time2.getMinutes()}`),
+                        ],
+                      },
+                      {
+                        $lte: [
+                          '$$time',
+                          parseInt(`${time.getHours()}${time.getMinutes()}`),
+                        ],
+                      },
+                    ],
+                  },
+                },
+              },
+              screenNumber: 1,
+              movieID: 1,
+              theatreID: 1,
+            },
+          },
+        ]);
+      } else if (args.languages && args.languages.length > 0) {
+        movies = await Movies.find({ language: { $in: args.languages } });
+        screens = await Screens.find({
+          movieID: { $in: movies.map(i => i._id) },
+        });
+      } else if (args.startTime) {
+        const m = args.startTime % 100;
+        const h = args.startTime / 100;
+        let time = new Date();
+        let time2 = new Date();
+        time.setHours(time.getHours() + h);
+        time.setMinutes(time.getMinutes() + m);
+        movies = await Movies.find({});
+        screens = await Screens.aggregate([
+          {
+            $match: {
+              movieID: { $in: movies.map(i => i._id) },
+            },
+          },
+          {
+            $project: {
+              timeOfMovieStart: {
+                $filter: {
+                  input: '$timeOfMovieStart',
+                  as: 'time',
+                  cond: {
+                    $and: [
+                      {
+                        $gt: [
+                          '$$time',
+                          parseInt(`${time2.getHours()}${time2.getMinutes()}`),
+                        ],
+                      },
+                      {
+                        $lte: [
+                          '$$time',
+                          parseInt(`${time.getHours()}${time.getMinutes()}`),
+                        ],
+                      },
+                    ],
+                  },
+                },
+              },
+              screenNumber: 1,
+              movieID: 1,
+              theatreID: 1,
+            },
+          },
+        ]);
+      } else {
+        console.log('else');
+        movies = await Movies.find({});
+        screens = await Screens.find({
+          movieID: { $in: movies.map(i => i._id) },
+        });
+      }
+      console.log('screens', screens);
       const theatres = await Theatres.find({
-        _id: { $in: screens.map(i => i.theatreID) },
+        _id: {
+          $in: screens.map(i => {
+            if (i.timeOfMovieStart.length > 0) return i.theatreID;
+            else return null;
+          }),
+        },
       });
 
       const modifiedTheatres = theatres.map(theatre => {
@@ -39,6 +147,7 @@ export default {
         });
         return Object.assign({}, theatre.toJSON(), { shows });
       });
+      console.log(modifiedTheatres);
       return modifiedTheatres;
     },
   },

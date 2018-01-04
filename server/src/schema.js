@@ -25,7 +25,7 @@ type Theatre {
 }
 
 type Query {
-  getTheatres(languages : [String]) : [Theatre]
+  getTheatres(languages : [String], startTime: Int) : [Theatre]
 }
 `;
 
